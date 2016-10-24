@@ -1,0 +1,70 @@
+﻿<Window x:Class="WpfApplication.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApplication"
+        xmlns:con="clr-namespace:WpfApplication.Converters"
+        mc:Ignorable="d"
+        Title="Kantorek" Height="200" Width="210">
+    <Window.DataContext>
+        <local:ViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <con:StringToDoubleConverter x:Key="toDoubleConverter" />
+        <con:IsCorrect x:Key="isCorrect" />
+    </Window.Resources>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="quantityTB" FontSize="23"  TextAlignment="Right" Text="100" />
+            <TextBlock Grid.Column="2" FontSize="23" TextAlignment="Center"  Text="{Binding Path=FirstCurrency}"/>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <TextBox FontSize="23" IsEnabled="False" TextAlignment="Right" Text="{Binding Path=Result}"/>
+            <TextBlock Grid.Column="2" FontSize="23" TextAlignment="Center" 
+                       Text="{Binding Path=SecondCurrency}"/>
+        </Grid>
+
+        <ComboBox x:Name="currenciesTB" Grid.Row="4" FontSize="25" ItemsSource="{Binding Path=Currencies}"
+                  SelectedItem="{Binding Path=CurrentCurrency}" >
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Width="180">
+                        <TextBlock FontSize="10">
+                            <Run Text="{Binding NameShortcut}" /> - <Run Text="{Binding Name}" />
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Grid Grid.Row="6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Button  Content="Calculate" Command="{Binding CalculateCommand}"
+                     CommandParameter="{Binding ElementName=quantityTB, Path=Text, Converter={StaticResource toDoubleConverter}}" 
+                     IsEnabled="{Binding ElementName=quantityTB, Path=Text, Converter={StaticResource isCorrect}, Mode=OneWay}"/>
+            <Button Grid.Column="2" Content="Swap" Command="{Binding Path=SwapCommand}"/>
+        </Grid>
+    </Grid>
+</Window>
